@@ -6,6 +6,7 @@ use TomShaw\GoogleApi\Resources\GoogleBooks;
 use TomShaw\GoogleApi\Resources\GoogleCalendar;
 use TomShaw\GoogleApi\Resources\GoogleDrive;
 use TomShaw\GoogleApi\Resources\GoogleMail;
+use TomShaw\GoogleApi\Resources\Youtube;
 
 class GoogleApiManager
 {
@@ -27,5 +28,10 @@ class GoogleApiManager
     public function calendar(): GoogleCalendar
     {
         return new GoogleCalendar(app(GoogleClient::class));
+    }
+
+    public function youtube(): Youtube
+    {
+        return new Youtube(app(GoogleClient::class));
     }
 }

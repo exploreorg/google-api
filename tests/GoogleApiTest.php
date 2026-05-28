@@ -4,7 +4,7 @@ use Google\Client;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use PHPUnit\Framework\TestCase;
-use TomShaw\GoogleApi\GoogleApi;
+use TomShaw\GoogleApi\Facades\GoogleApi;
 use TomShaw\GoogleApi\GoogleClient;
 use TomShaw\GoogleApi\Resources\GoogleCalendar;
 use TomShaw\GoogleApi\Resources\GoogleMail;

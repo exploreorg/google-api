@@ -1,8 +1,9 @@
 <?php
 
-namespace TomShaw\GoogleApi;
+namespace TomShaw\GoogleApi\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use TomShaw\GoogleApi\GoogleApiManager;
 
 /**
  * @mixin GoogleApiManager

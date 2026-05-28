@@ -3,14 +3,16 @@
 namespace TomShaw\GoogleApi;
 
 use Google\Client;
+use Illuminate\Console\Concerns\InteractsWithIO;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use TomShaw\GoogleApi\Exceptions\GoogleClientException;
-use TomShaw\GoogleApi\Http\Resources\AccessTokenResource;
 use TomShaw\GoogleApi\Models\StorageCollection;
 use TomShaw\GoogleApi\Storage\StorageAdapterInterface;
 
 class GoogleClient
 {
+    use InteractsWithIO;
     protected StorageAdapterInterface $storageAdapter;
 
     public static $rules = [
@@ -44,6 +46,8 @@ class GoogleClient
         $client->setIncludeGrantedScopes(config('google-api.include_grant_scopes'));
 
         $this->setStorage(app(config('google-api.token_storage_adapter')));
+
+        $this->output = new ConsoleOutput();
     }
 
     public function __invoke(): ?Client
@@ -117,6 +121,10 @@ class GoogleClient
     public function createAuthUrl(): void
     {
         $authUrl = $this->client->createAuthUrl();
+        if (app()->runningInConsole()) {
+            $this->info('No access token found. Generate one with this link: ' . $authUrl);
+            return;
+        }
         header('Location: '.filter_var($authUrl, FILTER_SANITIZE_URL));
         exit;
     }
@@ -125,7 +133,7 @@ class GoogleClient
     {
         $response = $this->client->fetchAccessTokenWithRefreshToken($refreshToken);
 
-        $resource = new AccessTokenResource($response);
+        $resource = new GoogleApiAccessTokenResource($response);
 
         if (array_key_exists('error', $resource->resource)) {
             throw new GoogleClientException($resource->resource['error']);
@@ -138,7 +146,7 @@ class GoogleClient
     {
         $response = $this->client->fetchAccessTokenWithAuthCode($authCode);
 
-        $resource = new AccessTokenResource($response);
+        $resource = new GoogleApiAccessTokenResource($response);
 
         if (array_key_exists('error', $resource->resource)) {
             throw new GoogleClientException($resource->resource['error']);
